@@ -12,12 +12,6 @@ def grabVecs(filename):
     return pickle.load(fr)
 
 
-def grabVecs(filename):
-    import pickle
-    fr = open(filename)
-    return pickle.load(fr)
-
-
 context = grabVecs("context.pkl")
 question = grabVecs("question.pkl")
 answer = grabVecs("answer.pkl")

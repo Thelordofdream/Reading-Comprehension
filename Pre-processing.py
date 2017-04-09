@@ -74,6 +74,7 @@ def pre_processing(table):
             sentence[start + i] = vector
             i += 1
         c.append(sentence)
+
         question = each[2].split(" ")
         sentence = np.zeros((len_q, length), dtype="int32")
         m = len(question)
@@ -101,3 +102,4 @@ def pre_processing(table):
     storeVecs(q, "question.pkl")
     storeVecs(a, "answer.pkl")
 
+pre_processing("CQA2")
