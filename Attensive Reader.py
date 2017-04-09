@@ -211,7 +211,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
     print("Optimization Finished!")
     # Calculate accuracy for 128 mnist test images
     saver = tf.train.Saver()
-    save_path = saver.save(sess, "./test1/model.ckpt")
+    save_path = saver.save(sess, "./Model for mnist/model.ckpt")
     print("Model saved in file: %s" % save_path)
 
 
