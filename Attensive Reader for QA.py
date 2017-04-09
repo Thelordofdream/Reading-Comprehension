@@ -18,10 +18,10 @@ answer = grabVecs("answer.pkl")
 # mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
 
 # Parameters
-learning_rate = 0.001
+learning_rate = 0.005
 training_iters = 100
 batch_size = 100
-display_step = 10
+display_step = 2
 
 # Network Parameters
 n_input_d = 19
