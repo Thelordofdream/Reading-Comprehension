@@ -87,19 +87,17 @@ def pre_processing(table):
         q.append(sentence)
 
         answer = each[3].split(" ")
-        sentence = np.zeros((len_a, length), dtype="int32")
-        m = len(answer)
-        start = int((len_a - m) / 2)
-        i = 0
+        # sentence = np.zeros((len_a, length), dtype="int32")
+        # m = len(answer)
+        # start = int((len_a - m) / 2)
+        # i = 0
         for word in answer:
             vector = [0 for n in range(length)]
             vector[vocab_tree[word] - 1] = 1
-            sentence[start + i] = vector
-            i += 1
-        a.append(sentence)
+            # sentence[start + i] = vector
+            # i += 1
+            a.append(vector)
     storeVecs(c, "context.pkl")
     storeVecs(q, "question.pkl")
     storeVecs(a, "answer.pkl")
 
-
-pre_processing("CQA2")
