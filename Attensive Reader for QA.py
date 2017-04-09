@@ -12,7 +12,7 @@ def grabVecs(filename):
     return pickle.load(fr)
 
 
-mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
+# mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
 
 # Parameters
 learning_rate = 0.001
@@ -21,14 +21,12 @@ batch_size = 100
 display_step = 10
 
 # Network Parameters
-n_input_d = 28
-n_input_q = 28
-n_steps_d = 28  # timesteps
-n_steps_q = 28
-x_dim = 28
+n_input_d = 19
+n_input_q = 19
+n_steps_d = 12  # timesteps
+n_steps_q = 3
 n_hidden = 16  # hidden layer num of features
-n_classes = 10  # MNIST total classes (0-9 digits)
-total = 2162
+n_classes = 19  # MNIST total classes (0-9 digits)
 
 d = tf.placeholder("float", [None, n_steps_d, n_input_d])
 q = tf.placeholder("float", [None, n_steps_q, n_input_q])
