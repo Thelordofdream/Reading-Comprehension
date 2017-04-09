@@ -5,6 +5,7 @@ from tensorflow import constant
 from tensorflow.contrib import rnn
 import numpy as np
 
+
 def grabVecs(filename):
     import pickle
     fr = open(filename)
