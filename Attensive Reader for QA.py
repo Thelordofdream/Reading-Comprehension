@@ -18,9 +18,9 @@ answer = grabVecs("answer.pkl")
 # mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
 
 # Parameters
-learning_rate = 0.005
-training_iters = 100
-batch_size = 100
+learning_rate = 0.001
+training_iters = 1000
+batch_size = 200
 display_step = 2
 
 # Network Parameters
@@ -29,10 +29,11 @@ n_input_q = 19
 n_steps_d = 12  # timesteps
 n_steps_q = 3
 n_hidden = 16  # hidden layer num of features
-n_classes = 19  # MNIST total classes (0-9 digits)
+n_classes = 6  # MNIST total classes (0-9 digits)
+vocab_size = 20
 
-d = tf.placeholder("float", [None, n_steps_d, n_input_d])
-q = tf.placeholder("float", [None, n_steps_q, n_input_q])
+d = tf.placeholder(tf.int32, [None, n_steps_d])
+q = tf.placeholder(tf.int32, [None, n_steps_q])
 istate_fw_d = tf.placeholder("float", [None, 2 * n_hidden])
 istate_bw_d = tf.placeholder("float", [None, 2 * n_hidden])
 istate_fw_q = tf.placeholder("float", [None, 2 * n_hidden])
@@ -89,6 +90,14 @@ def create_network(name="N1", X=None, n_input=1, seq_len=1):
         return outputs, output1, output2
 
 
+def embedding_layer(name="N1", X=None, n_input=1, seq_len=1):
+    with tf.variable_scope(name):
+        embedding = tf.get_variable('embedding', [vocab_size, n_input])
+        X = tf.nn.embedding_lookup(embedding, X)
+        X = shape_tranform(X=X, n_input=n_input, n_step=seq_len)
+        return X
+
+
 def hidden_layer(name="N1", X=None, weights=None, biases=None, n_input=1, seq_len=1):
     with tf.variable_scope(name):
         # Reshape to prepare input to hidden activation
@@ -109,7 +118,7 @@ def shape_tranform(X=None, n_input=1, n_step=1):
 
 def Bi_LSTM_D(_X, _weights, _biases, _batch_size, _seq_len, _n_input):
     n_step = _seq_len
-    _X = shape_tranform(X=_X, n_input=_n_input, n_step=n_step)
+    _X = embedding_layer(name="ed", X=_X, n_input=_n_input, seq_len=n_step)
     _seq_len = tf.fill([_batch_size], constant(_seq_len, dtype=tf.float32))
 
     outputs, output1, output2 = create_network(name="LSTM_D", X=_X, n_input=_n_input, seq_len=_seq_len)
@@ -122,7 +131,7 @@ def Bi_LSTM_D(_X, _weights, _biases, _batch_size, _seq_len, _n_input):
 
 def Bi_LSTM_Q(_X, _weights, _biases, _batch_size, _seq_len, _n_input):
     n_step = _seq_len
-    _X = shape_tranform(X=_X, n_input=_n_input, n_step=n_step)
+    _X = embedding_layer(name="eq", X=_X, n_input=_n_input, seq_len=n_step)
     _seq_len = tf.fill([_batch_size], constant(_seq_len, dtype=tf.float32))
 
     outputs, output1, output2 = create_network(name="LSTM_Q", X=_X, n_input=_n_input, seq_len=_seq_len)
@@ -171,7 +180,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
     for i in range(training_iters):
         # 持续迭代
         step = 1
-        while step < 9:
+        while step < 4:
             # batch_d = np.array(x_train[(step - 1) * batch_size: step * batch_size])
             # batch_q = np.array(x_train[(step - 1) * batch_size: step * batch_size])
             # batch_a = np.array(y_train[(step - 1) * batch_size: step * batch_size])
@@ -219,5 +228,5 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
     print("Optimization Finished!")
     # Calculate accuracy for 128 mnist test images
     saver = tf.train.Saver()
-    save_path = saver.save(sess, "./test1/model.ckpt")
+    save_path = saver.save(sess, "./Model for QA/model.ckpt")
     print("Model saved in file: %s" % save_path)
