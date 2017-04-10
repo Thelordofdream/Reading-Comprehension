@@ -20,7 +20,7 @@ answer = grabVecs("answer.pkl")
 # Parameters
 learning_rate = 0.001
 training_iters = 1000
-batch_size = 200
+batch_size = 100
 display_step = 2
 
 # Network Parameters
@@ -90,10 +90,15 @@ def create_network(name="N1", X=None, n_input=1, seq_len=1):
         return outputs, output1, output2
 
 
-def embedding_layer(name="N1", X=None, n_input=1, seq_len=1):
+def embedding_layer(name="N1", X=None, n_input=1, seq_len=1, flag=None):
     with tf.variable_scope(name):
         embedding = tf.get_variable('embedding', [vocab_size, n_input])
         X = tf.nn.embedding_lookup(embedding, X)
+        if not flag is None:
+            for i in range(batch_size):
+                zero = [0 for i in range(seq_len)]
+                for f in flag[i]:
+                    X[i][f] = zero
         X = shape_tranform(X=X, n_input=n_input, n_step=seq_len)
         return X
 
@@ -118,6 +123,13 @@ def shape_tranform(X=None, n_input=1, n_step=1):
 
 def Bi_LSTM_D(_X, _weights, _biases, _batch_size, _seq_len, _n_input):
     n_step = _seq_len
+    # flag = []
+    # for i in range(_batch_size):
+    #     each = []
+    #     for j in range(n_step):
+    #         if _X[i][j] == 0:
+    #             each.append(j)
+    #     flag.append(each)
     _X = embedding_layer(name="ed", X=_X, n_input=_n_input, seq_len=n_step)
     _seq_len = tf.fill([_batch_size], constant(_seq_len, dtype=tf.float32))
 
@@ -180,7 +192,7 @@ with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
     for i in range(training_iters):
         # 持续迭代
         step = 1
-        while step < 4:
+        while step < (1000 - batch_size) / batch_size:
             # batch_d = np.array(x_train[(step - 1) * batch_size: step * batch_size])
             # batch_q = np.array(x_train[(step - 1) * batch_size: step * batch_size])
             # batch_a = np.array(y_train[(step - 1) * batch_size: step * batch_size])
