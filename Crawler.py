@@ -25,11 +25,11 @@ No = 0
 index = 0
 
 def deal_unicode(string):
-    string = string.replace("\\n", "").replace("\\u2019", "'").replace("<i>", "").replace("</i>", "").replace("\\u2013", "-").replace("<b>", "").replace("</b>", "").replace("\\u201c", "\"").replace("\\u201d", "\"").replace("\\u2026", "...").replace("\xe9", "e").replace("\\u2014", "-")
+    string = string.replace("\\n", "").replace("\\u2019", "'").replace("<i>", "").replace("</i>", "").replace("\\u2013", "-").replace("<b>", "").replace("</b>", "").replace("\\u201c", "\"").replace("\\u201d", "\"").replace("\\u2026", "...").replace("\xe9", "e").replace("\\u2014", "-").replace("     <br/>", "")
     return string
 
 
-for i in range(100):
+for i in range(4):
     print "---------------------page:%d---------------------" % (i + 1)
     url = "http://gre.kmf.com/subject/lib?&t=12239101,12210104,12210202,12221202,12231101,12210105,12239103,12210111,12210204,12221204,12231102,12210112&p=2&p=%d" % (1 + i)
     content = urllib2.urlopen(url).read()
@@ -38,6 +38,7 @@ for i in range(100):
     # print bases
     essay = 0
     for base in bases:
+        print base
         url0 = "http://gre.kmf.com" + base
         response = requests.get(url0)
         soup = BeautifulSoup(response.text, "lxml")
