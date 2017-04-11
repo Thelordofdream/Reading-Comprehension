@@ -38,66 +38,69 @@ for i in range(100):
     # print bases
     essay = 0
     for base in bases:
-        No += 1
-        essay += 1
         url0 = "http://gre.kmf.com" + base
         response = requests.get(url0)
         soup = BeautifulSoup(response.text, "lxml")
-        context = soup.find_all("div", class_="content")[0].find_all("div")
-        context = re.findall(r'<div>(.*?)</div>', str(context))[0].replace("                     ", "")
-        context = context.replace("<br/><br/>", " ")
-        context = deal_unicode(context)
-        with connection.cursor() as cursor:
-            # Create a new record
-            sql = "INSERT INTO Context "
-            sql += "(No, Context) VALUES (%s, %s)"
-            # cursor.execute(sql, (No, context))
-        # connection.commit()
-        print "---------------------essay:%d---------------------" % essay
-        # print context
-        num = soup.find_all("ul", class_="clearfix")
-        num = re.findall(r'<a enid=.*? href="(.*?)">', str(num))
-        for url1 in num:
-            index += 1
-            url2 = "http://gre.kmf.com" + url1
-            response = requests.get(url2)
-            soup0 = BeautifulSoup(response.text, "lxml")
-            question = soup0.find_all("div", class_="options")[0].find_all("div", class_="mb20")
-            question = re.findall(r'<div class="mb20">(.*?)</div>', str(question))[0]
-            question = deal_unicode(question).replace(u'\u2014', "-").replace("         ", "").replace("       ", "")
-            print question
-            answer = soup0.find_all("div", class_="que-anser-myanswer", id="ShowAnswer")[0].find("b").string
-            print answer
-            if len(answer) <= 4:
-                with connection.cursor() as cursor:
-                    # Create a new record
-                    sql = "INSERT INTO Question "
-                    sql += "(No, Question, Answer) VALUES (%s, %s, %s)"
-                    cursor.execute(sql, (No, question, answer))
-                connection.commit()
-                options = soup0.find_all("li", class_="clearfix")
-                A = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[0]))[0]
-                A = deal_unicode(A)
-                B = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[1]))[0]
-                B = deal_unicode(B)
-                C = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[2]))[0]
-                C = deal_unicode(C)
-                try:
-                    D = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[3]))[0]
-                    D = deal_unicode(D)
-                except IndexError:
-                    D = ""
-                try:
-                    E = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[4]))[0]
-                    E = deal_unicode(E)
-                except IndexError:
-                    E = ""
-                print A, B, C, D, E
-                with connection.cursor() as cursor:
-                    # Create a new record
-                    sql = "INSERT INTO Answer "
-                    sql += "(No, A, B, C, D, E) VALUES (%s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql, (No, A, B, C, D, E))
-                connection.commit()
+        try:
+            context = soup.find_all("div", class_="content")[0].find_all("div")
+            No += 1
+            essay += 1
+            context = re.findall(r'<div>(.*?)</div>', str(context))[0].replace("                     ", "")
+            context = context.replace("<br/><br/>", " ")
+            context = deal_unicode(context)
+            with connection.cursor() as cursor:
+                # Create a new record
+                sql = "INSERT INTO Context "
+                sql += "(No, Context) VALUES (%s, %s)"
+                # cursor.execute(sql, (No, context))
+            # connection.commit()
+            print "---------------------essay:%d---------------------" % essay
+            # print context
+            num = soup.find_all("ul", class_="clearfix")
+            num = re.findall(r'<a enid=.*? href="(.*?)">', str(num))
+            for url1 in num:
+                index += 1
+                url2 = "http://gre.kmf.com" + url1
+                response = requests.get(url2)
+                soup0 = BeautifulSoup(response.text, "lxml")
+                question = soup0.find_all("div", class_="options")[0].find_all("div", class_="mb20")
+                question = re.findall(r'<div class="mb20">(.*?)</div>', str(question))[0]
+                question = deal_unicode(question).replace(u'\u2014', "-").replace("         ", "").replace("       ", "")
+                print question
+                answer = soup0.find_all("div", class_="que-anser-myanswer", id="ShowAnswer")[0].find("b").string
+                print answer
+                if len(answer) <= 4:
+                    with connection.cursor() as cursor:
+                        # Create a new record
+                        sql = "INSERT INTO Question "
+                        sql += "(No, Question, Answer) VALUES (%s, %s, %s)"
+                        cursor.execute(sql, (No, question, answer))
+                    connection.commit()
+                    options = soup0.find_all("li", class_="clearfix")
+                    A = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[0]))[0]
+                    A = deal_unicode(A)
+                    B = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[1]))[0]
+                    B = deal_unicode(B)
+                    C = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[2]))[0]
+                    C = deal_unicode(C)
+                    try:
+                        D = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[3]))[0]
+                        D = deal_unicode(D)
+                    except IndexError:
+                        D = ""
+                    try:
+                        E = re.findall(r'<span><strong>.*?</strong>(.*?)</span>', str(options[4]))[0]
+                        E = deal_unicode(E)
+                    except IndexError:
+                        E = ""
+                    # print A, B, C, D, E
+                    with connection.cursor() as cursor:
+                        # Create a new record
+                        sql = "INSERT INTO Answer "
+                        sql += "(No, A, B, C, D, E) VALUES (%s, %s, %s, %s, %s, %s)"
+                        cursor.execute(sql, (No, A, B, C, D, E))
+                    connection.commit()
+        except IndexError:
+            pass
 connection.close()
 print "total:%d" % index
