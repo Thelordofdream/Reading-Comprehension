@@ -12,7 +12,7 @@ connection = pymysql.connect(user='root', password='root',
                              database='RC')
 
 cursor = connection.cursor()
-commit = "CREATE TABLE IF NOT EXISTS Context (No int, Context VARCHAR(2000));"
+commit = "CREATE TABLE IF NOT EXISTS Context (No int, Context VARCHAR(6000));"
 cursor.execute(commit)
 connection.commit()
 commit = "CREATE TABLE IF NOT EXISTS Question (No int, Question VARCHAR(1000), Answer VARCHAR(10));"
@@ -24,14 +24,21 @@ connection.commit()
 No = 0
 index = 0
 
+
 def deal_unicode(string):
-    string = string.replace("\\n", "").replace("\\u2019", "'").replace("<i>", "").replace("</i>", "").replace("\\u2013", "-").replace("<b>", "").replace("</b>", "").replace("\\u201c", "\"").replace("\\u201d", "\"").replace("\\u2026", "...").replace("\xe9", "e").replace("\\u2014", "-").replace("     <br/>", "")
+    string = string.replace("\\n", "").replace("\\u2019", "'").replace("<i>", "").replace("</i>", "").replace("\\u2013",
+                                                                                                              "-").replace(
+        "<b>", "").replace("</b>", "").replace("\\u201c", "\"").replace("\\u201d", "\"").replace("\\u2026",
+                                                                                                 "...").replace("\xe9",
+                                                                                                                "e").replace(
+        "\\u2014", "-").replace("     <br/>", "")
     return string
 
 
-for i in range(4):
+for i in range(100):
     print "---------------------page:%d---------------------" % (i + 1)
-    url = "http://gre.kmf.com/subject/lib?&t=12239101,12210104,12210202,12221202,12231101,12210105,12239103,12210111,12210204,12221204,12231102,12210112&p=2&p=%d" % (1 + i)
+    url = "http://gre.kmf.com/subject/lib?&t=12239101,12210104,12210202,12221202,12231101,12210105,12239103,12210111,12210204,12221204,12231102,12210112&p=2&p=%d" % (
+    1 + i)
     content = urllib2.urlopen(url).read()
     # print content
     bases = re.findall(r'<b>.*?<a href="(.*?)">.*?</a></b>', content)
@@ -44,21 +51,14 @@ for i in range(4):
         soup = BeautifulSoup(response.text, "lxml")
         try:
             context = soup.find_all("div", class_="content")[0].find_all("div")
-            No += 1
             essay += 1
+            print "---------------------essay:%d---------------------" % essay
             context = re.findall(r'<div>(.*?)</div>', str(context))[0].replace("                     ", "")
             context = context.replace("<br/><br/>", " ")
             context = deal_unicode(context)
-            with connection.cursor() as cursor:
-                # Create a new record
-                sql = "INSERT INTO Context "
-                sql += "(No, Context) VALUES (%s, %s)"
-                # cursor.execute(sql, (No, context))
-            # connection.commit()
-            print "---------------------essay:%d---------------------" % essay
-            # print context
             num = soup.find_all("ul", class_="clearfix")
             num = re.findall(r'<a enid=.*? href="(.*?)">', str(num))
+            get = False
             for url1 in num:
                 index += 1
                 url2 = "http://gre.kmf.com" + url1
@@ -66,11 +66,22 @@ for i in range(4):
                 soup0 = BeautifulSoup(response.text, "lxml")
                 question = soup0.find_all("div", class_="options")[0].find_all("div", class_="mb20")
                 question = re.findall(r'<div class="mb20">(.*?)</div>', str(question))[0]
-                question = deal_unicode(question).replace(u'\u2014', "-").replace("         ", "").replace("       ", "")
+                question = deal_unicode(question).replace(u'\u2014', "-").replace("         ", "").replace("       ",
+                                                                                                           "")
                 print question
                 answer = soup0.find_all("div", class_="que-anser-myanswer", id="ShowAnswer")[0].find("b").string
                 print answer
-                if len(answer) <= 4:
+                if not answer is None and len(answer) <= 4:
+                    if not get:
+                        No += 1
+                        with connection.cursor() as cursor:
+                            # Create a new record
+                            sql = "INSERT INTO Context "
+                            sql += "(No, Context) VALUES (%s, %s)"
+                            cursor.execute(sql, (No, context))
+                        connection.commit()
+                        # print context
+                    get = True
                     with connection.cursor() as cursor:
                         # Create a new record
                         sql = "INSERT INTO Question "
