@@ -12,9 +12,9 @@ def grabVecs(filename):
     return pickle.load(fr)
 
 
-context = grabVecs("context.pkl")
-question = grabVecs("question.pkl")
-answer = grabVecs("answer.pkl")
+context = grabVecs("./Data for input/context.pkl")
+question = grabVecs("./Data for input/question.pkl")
+answer = grabVecs("./Data for input/answer.pkl")
 # mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
 
 # Parameters

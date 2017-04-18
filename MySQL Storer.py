@@ -11,7 +11,7 @@ commit = "CREATE TABLE IF NOT EXISTS CQA2 (No int, Context VARCHAR(100), Questio
 cursor.execute(commit)
 connection.commit()
 
-filename = "./data/en/qa1_single-supporting-fact_train.txt"
+filename = "./DataSet/en/qa1_single-supporting-fact_train.txt"
 fr = open(filename)
 lines = fr.readlines()
 number = len(lines)/3

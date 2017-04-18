@@ -50,13 +50,13 @@ def pre_processing(table):
     for i in vocab_Set:
         vocab_dict[i] = no + 1
         no += 1
-    storeVecs(vocab_dict, "vocabTree.pkl")
+    storeVecs(vocab_dict, "./Data for input/vocabTree.pkl")
     answer_dict = {'hallway': 1, 'garden': 2, 'office': 3, 'kitchen': 4, 'bathroom': 5, 'bedroom': 6}
     vocab = []
     for i in vocab_Set:
         i += "\n"
         vocab += i
-    store_set(vocab, "vocabSet.txt")
+    store_set(vocab, "./Data for input/vocabSet.txt")
 
     c = []
     q = []
@@ -103,9 +103,9 @@ def pre_processing(table):
             # sentence[start + i] = vector
             # i += 1
             a.append(vector)
-    storeVecs(c, "context.pkl")
-    storeVecs(q, "question.pkl")
-    storeVecs(a, "answer.pkl")
+    storeVecs(c, "./Data for input/context.pkl")
+    storeVecs(q, "./Data for input/question.pkl")
+    storeVecs(a, "./Data for input/answer.pkl")
 
 
 pre_processing("CQA2")
