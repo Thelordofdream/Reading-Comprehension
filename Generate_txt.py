@@ -32,15 +32,17 @@ for index in range(1, 947):
         commit = "Select A,B,C,D,E from Answer where No = %d;" % index
         cursor0.execute(commit)
         no = 0
-        # print cursor0.fetchall()
         # print num
         # print cursor0.fetchall()
-        for option in cursor0.fetchall()[-1]:
-            # print num_list[no] + ". " + option
-            txt.append(num_list[no] + ". " + option + "\n")
-            no += 1
-        # print "Right Answer is:" + context[2]
-        txt.append("Right Answer is:" + context[2] + "\n\n")
+        try:
+            for option in cursor0.fetchall()[num]:
+                # print num_list[no] + ". " + option
+                txt.append(num_list[no] + ". " + option + "\n")
+                no += 1
+                # print "Right Answer is:" + context[2]
+            txt.append("Right Answer is:" + context[2] + "\n\n")
+        except IndexError:
+            txt.pop()
         num += 1
     txt.append("\n")
 # print txt
